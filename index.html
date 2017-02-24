@@ -36,7 +36,7 @@
 		angular.module('stampCollection', ['ngRoute'])
 			.config(function($routeProvider, $locationProvider){
 				$routeProvider
-					.when('/', {
+					.when('', {
 						templateUrl: 'index.html'
 					})
 					.when('/publish', {
@@ -55,7 +55,7 @@
 
 			})
 			.run(function($rootScope, $location, $route) {
-			  console.log($location.path())
+			  //console.log($location.path())
 
 			});
 	</script>
