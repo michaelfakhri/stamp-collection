@@ -40,11 +40,10 @@
 						templateUrl: 'index.html'
 					})
 					.when('stamp-collection/#/publish', {
-
-						template: function(param) {console.log(param)}
+						templateUrl: 'publish.html'
 					})
 					.otherwise({
-						templateUrl: 'error.html'
+						template: function(param) {console.log(param)}
 					});
 
 			})
