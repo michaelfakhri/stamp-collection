@@ -25,6 +25,14 @@
 	<p align="center"> Here is the publish page </p>
 	</script>
 
+	<script type="text/ng-template" id="view.html">
+		<p align="center"> Here is the view page </p>
+	</script>
+
+	<script type="text/ng-template" id="search.html">
+		<p align="center"> Here is the search page </p>
+	</script>
+
 	<script type="text/ng-template" id="error.html">
 	<p align="center">OOP! An error occurred</p>
 	</script>
@@ -36,7 +44,7 @@
 		angular.module('stampCollection', ['ngRoute'])
 			.config(function($routeProvider, $locationProvider){
 				$routeProvider
-					.when('', {
+					.when('/', {
 						templateUrl: 'index.html'
 					})
 					.when('/publish', {
