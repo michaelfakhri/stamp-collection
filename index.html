@@ -27,6 +27,7 @@
 
 	<script type="text/ng-template" id="view.html">
 		<p align="center"> Here is the view page </p>
+		<script>node.query({}).then((result) => console.log("result is" + result))</script>
 	</script>
 
 	<script type="text/ng-template" id="search.html">
@@ -62,6 +63,10 @@
 					//$locationProvider.html5Mode(true);
 
 			})
+
+			if (!node) {
+		  		node = new MongoIdbDs2("stamps", "")
+			}
 			//.run(function($rootScope, $location, $route) {
 			  //console.log($location.path())
 
