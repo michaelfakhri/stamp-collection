@@ -36,18 +36,26 @@
 		angular.module('stampCollection', ['ngRoute'])
 			.config(function($routeProvider, $locationProvider){
 				$routeProvider
-					.when('stamp-collection/', {
+					.when('/', {
 						templateUrl: 'index.html'
 					})
-					.when('stamp-collection/#/publish', {
+					.when('/publish', {
 						templateUrl: 'publish.html'
 					})
+				    .when('/view', {
+					    templateUrl: 'view.html'
+					})
+					.when('/search', {
+					    templateUrl: 'search.html'
+					})
 					.otherwise({
-						template: function(param) {console.log(param)}
+						templateUrl: 'error.html'
 					});
+					//$locationProvider.html5Mode(true);
 
 			})
 			.run(function($rootScope, $location, $route) {
+			  console.log($location.path())
 
 			});
 	</script>
