@@ -45,16 +45,16 @@
 		angular.module('stampCollection', ['ngRoute'])
 			.config(function($routeProvider, $locationProvider){
 				$routeProvider
-					.when('/stamp-collection/', {
+					.when('stamp-collection/', {
 						templateUrl: 'index.html'
 					})
-					.when('/stamp-collection/#/publish', {
+					.when('stamp-collection/#/publish', {
 						templateUrl: 'publish.html'
 					})
-					.when('/stamp-collection/#/view', {
+					.when('stamp-collection/#/view', {
 						templateUrl: 'view.html'
 					})
-					.when('/stamp-collection/#/search', {
+					.when('stamp-collection/#/search', {
 						templateUrl: 'search.html'
 					})
 					.otherwise({
