@@ -25,14 +25,6 @@
 	<p align="center"> Here is the publish page </p>
 	</script>
 
-	<script type="text/ng-template" id="view.html">
-	<p align="center"> Here is the view page </p>
-	</script>
-
-	<script type="text/ng-template" id="search.html">
-	<p align="center"> Here is the search page </p>
-	</script>
-
 	<script type="text/ng-template" id="error.html">
 	<p align="center">OOP! An error occurred</p>
 	</script>
@@ -47,14 +39,9 @@
 					.when('stamp-collection/', {
 						templateUrl: 'index.html'
 					})
-					.when('stamp-collection/publish', {
-						templateUrl: 'publish.html'
-					})
-					.when('stamp-collection/view', {
-						templateUrl: 'view.html'
-					})
-					.when('	stamp-collection/search', {
-						templateUrl: 'search.html'
+					.when('stamp-collection/#/publish', {
+
+						template: function(param) {console.log(param)}
 					})
 					.otherwise({
 						templateUrl: 'error.html'
