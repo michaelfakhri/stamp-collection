@@ -19,7 +19,6 @@
 
 	<script type="text/ng-template" id="index.html">
 	<p align="center"> Here is the home page </p>
-	<script>window.node = new MongoIdbDs2("stamps","")</script>
 	</script>
 
 	<script type="text/ng-template" id="publish.html">
@@ -48,13 +47,13 @@
 					.when('stamp-collection/', {
 						templateUrl: 'index.html'
 					})
-					.when('stamp-collection/#/publish', {
+					.when('stamp-collection/publish', {
 						templateUrl: 'publish.html'
 					})
-					.when('stamp-collection/#/view', {
+					.when('stamp-collection/view', {
 						templateUrl: 'view.html'
 					})
-					.when('stamp-collection/#/search', {
+					.when('	stamp-collection/search', {
 						templateUrl: 'search.html'
 					})
 					.otherwise({
