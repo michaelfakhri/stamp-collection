@@ -24,7 +24,7 @@
 					<li><a href="#home">Home</a></li>
 					<li><a href="#view">View Local Stamps</a></li>
 					<li><a href="#search">Search</a></li>
-					<li><a href="#publish">Create</a></li>
+					<li><a href="#create">Create</a></li>
 				</ul>
           	</div>
 			<section ng-view></section>
@@ -33,15 +33,42 @@
 	<script type="application/javascript" src="index.min.js"></script>
 
 	<script type="text/ng-template" id="index.html">
+		<h1> Stamp Collection </h1>
 	<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
+	<div align="center">
+		<button id="injectButton" onclick="injectData();$('#dataChanged')[0].innerHTML='Injected 10 more data items'" class="btn btn-primary">Inject Data</button>
+		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items'" class="btn btn-primary">Reset Data</button>
+		<p id="dataChanged"></p>
+	</div>
 	</script>
 
-	<script type="text/ng-template" id="publish.html">
-	<p align="center"> Here is the publish page </p>
+	<script type="text/ng-template" id="create.html">
+		<div id="createForm" class="container">
+			<h1>Create</h1>
+			<form>
+				<div class="form-group">
+					<label for="name_create">Name</label>
+					<input type="text" class="form-control" id="name_create" placeholder="Enter Stamp Name" required>
+					<br>
+					<label for="country_create">Country Of Origin</label>
+					<input type="text" class="form-control" id="country_create" placeholder="Enter Country of Origin" required>
+					<br>
+					<label for="year_create">Year Of Origin</label>
+					<input type="number" min="100" max="2017" class="form-control" id="year_create" placeholder="Enter Year Of Origin" required>
+					<br>
+					<label for="file_create"  class="custom-file">Image</label>
+						<input type="file" id="file_create" class="form-control custom-file-input" required>
+						<span class="custom-file-control"></span>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
 	</script>
 
 	<script type="text/ng-template" id="view.html">
+
 		<div class="container">
+			<img id="photo" width="200" height="200" style="display:none;">
 			<h1>Local items</h1>
 			<div class="dropdown">
 				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
@@ -59,8 +86,22 @@
 	</script>
 
 	<script type="text/ng-template" id="search.html">
+
 		<div id="searchForm" class="container">
 			<h1>Search</h1>
+			<form>
+				<div class="form-group">
+					<label for="name">Name</label>
+					<input type="text" class="form-control" id="name"placeholder="Enter Stamp Name">
+					<br>
+					<label for="country">Country Of Origin</label>
+					<input type="text" class="form-control" id="country"placeholder="Enter Country of Origin">
+					<br>
+					<label for="year">Year Of Origin</label>
+					<input type="number" min="100" max="2017" class="form-control" id="year"placeholder="Enter Year Of Origin">
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
 		</div>
 		<div id="searchResults" class="container" style="display:none;">
 			<h1>Search Results</h1>
@@ -90,7 +131,7 @@
       angular.module('stampCollection.controllers', [])
 		.controller('view', [function() {
           initializeTable("#viewTable")
-		  node.query({}).then((result) => console.log("result: "+result))
+		  node.query({}).then((result) => parseAndAppendData(result, "#viewTable"))
 		}])
         .controller('search', [function() {
           initializeTable("#searchTable")
@@ -105,8 +146,8 @@
                   	.when('/home', {
                     	templateUrl: 'index.html'
                   	})
-					.when('/publish', {
-						templateUrl: 'publish.html'
+					.when('/create', {
+						templateUrl: 'create.html'
 					})
 				    .when('/view', {
 					    templateUrl: 'view.html',
@@ -123,13 +164,13 @@
 
 			})
 			.run(function($rootScope, $location, $route) {
-			  console.log("DEBUG: Current path is "+ $location.path())
+			  //console.log("DEBUG: Current path is "+ $location.path())
 			});
 
         var node
         if (!node) {
-          console.log("creating new node")
-          node = new MongoIdbDs2("stamps", "")
+          //console.log("creating new node")
+          node = new MongoIdbDs2("stamps", "hash, name, country, year")
 		  node.start()
         }
 
