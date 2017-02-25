@@ -3,22 +3,37 @@
 <html ng-app="stampCollection">
 	<head>
 		<title>Stamp Collection Demo</title>
-		<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/lumen/bootstrap.min.css" rel="stylesheet" integrity="sha384-mvYjhBJXQ9VlNETV/xXShy849GsBHnKzVVudnMOcWUVM/6Nd2ksj8VNng5f8ylyX" crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+		<style>
+			.table {word-wrap:break-word;}
+			.th-inner {
+				text-align: center;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="navbar" class="navbar navbar-default">
      			<ul class="nav navbar-nav">
-              			<li><a href="#publish">publish</a></li>
-              			<li><a href="#view">view</a></li>
-              			<li><a href="#search">search</a></li>
-            		</ul>
+					<li><a href="#home">Home</a></li>
+					<li><a href="#view">View Local Stamps</a></li>
+					<li><a href="#search">Search</a></li>
+					<li><a href="#publish">Create</a></li>
+				</ul>
           	</div>
-			<section align="center" ng-view></section>
+			<section ng-view></section>
 	</body>
+	<script type="application/javascript" src="functions.js"></script>
 	<script type="application/javascript" src="index.min.js"></script>
 
 	<script type="text/ng-template" id="index.html">
-	<p align="center"> Here is the home page </p>
+	<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
 	</script>
 
 	<script type="text/ng-template" id="publish.html">
@@ -26,12 +41,42 @@
 	</script>
 
 	<script type="text/ng-template" id="view.html">
-		<p align="center"> Here is the view page </p>
-		<script>node.query({}).then((result) => console.log("result is" + result))</script>
+		<div class="container">
+			<h1>Local items</h1>
+			<div class="dropdown">
+				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
+					<span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="javascript:jQuery('#viewTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
+					<li><a href="javascript:jQuery('#viewTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
+					<li><a href="javascript:jQuery('#viewTable').bootstrapTable('showColumn', 'view');">View</a></li>
+				</ul>
+			</div>
+			<div class="table-responsive">
+				<table align="center" id="viewTable" class="table table-bordered"></table>
+			</div>
+		</div>
 	</script>
 
 	<script type="text/ng-template" id="search.html">
-		<p align="center"> Here is the search page </p>
+		<div id="searchForm" class="container">
+			<h1>Search</h1>
+		</div>
+		<div id="searchResults" class="container" style="display:none;">
+			<h1>Search Results</h1>
+			<div class="dropdown">
+				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
+					<span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="javascript:jQuery('#searchTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
+					<li><a href="javascript:jQuery('#searchTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
+					<li><a href="javascript:jQuery('#searchTable').bootstrapTable('showColumn', 'view');">View</a></li>
+				</ul>
+			</div>
+			<div class="table-responsive">
+				<table align="center" id="searchTable" class="table table-bordered"></table>
+			</div>
+		</div>
 	</script>
 
 	<script type="text/ng-template" id="error.html">
@@ -42,35 +87,51 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.1/angular-route.js"></script>
     <script>
 
-		angular.module('stampCollection', ['ngRoute'])
+      angular.module('stampCollection.controllers', [])
+		.controller('view', [function() {
+          initializeTable("#viewTable")
+		  node.query({}).then((result) => console.log("result: "+result))
+		}])
+        .controller('search', [function() {
+          initializeTable("#searchTable")
+          node.query({}).then((result) => console.log("result: "+result))
+        }])
+	  angular.module('stampCollection', ['ngRoute','stampCollection.controllers'])
 			.config(function($routeProvider, $locationProvider){
 				$routeProvider
 					.when('/', {
 						templateUrl: 'index.html'
 					})
+                  	.when('/home', {
+                    	templateUrl: 'index.html'
+                  	})
 					.when('/publish', {
 						templateUrl: 'publish.html'
 					})
 				    .when('/view', {
-					    templateUrl: 'view.html'
+					    templateUrl: 'view.html',
+					  	controller: 'view'
 					})
 					.when('/search', {
-					    templateUrl: 'search.html'
-					})
+					    templateUrl: 'search.html',
+	                    controller: 'search'
+                    })
 					.otherwise({
 						templateUrl: 'error.html'
 					});
 					//$locationProvider.html5Mode(true);
 
 			})
-			var node
-			if (!node) {
-		  console.log("creating new node")
-		  		node = new MongoIdbDs2("stamps", "")
-			}
-			//.run(function($rootScope, $location, $route) {
-			  //console.log($location.path())
+			.run(function($rootScope, $location, $route) {
+			  console.log("DEBUG: Current path is "+ $location.path())
+			});
 
-			//});
+        var node
+        if (!node) {
+          console.log("creating new node")
+          node = new MongoIdbDs2("stamps", "")
+		  node.start()
+        }
+
 	</script>
 </html>
