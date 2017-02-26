@@ -25,19 +25,23 @@
 					<li><a href="#view">View Local Stamps</a></li>
 					<li><a href="#search">Search</a></li>
 					<li><a href="#create">Create</a></li>
+					<li><a href="#connections">Connections</a></li>
 				</ul>
-          	</div>
+		</div>
+		<div class="container" align="right">
+			<p style="display: inline;">IDENTITY: </p><p style="max-width: 30em;display: inline" id="identity" class="form-control"></p>
+		</div>
 			<section ng-view></section>
 	</body>
 	<script type="application/javascript" src="functions.js"></script>
 	<script type="application/javascript" src="index.min.js"></script>
 
 	<script type="text/ng-template" id="index.html">
-		<h1> Stamp Collection </h1>
+		<div align="center" class="container">
+		<h1 align> Stamp Collection </h1>
 	<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
-	<div align="center">
 		<button id="injectButton" onclick="injectData();$('#dataChanged')[0].innerHTML='Injected 10 more data items'" class="btn btn-primary">Inject Data</button>
-		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items'" class="btn btn-primary">Reset Data and Connections</button>
+		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items and reset connections'" class="btn btn-primary">Reset Data and Connections</button>
 		<p id="dataChanged"></p>
 	</div>
 	</script>
@@ -75,9 +79,9 @@
 				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
 					<span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="javascript:jQuery('#viewTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
-					<li><a href="javascript:jQuery('#viewTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
-					<li><a href="javascript:jQuery('#viewTable').bootstrapTable('showColumn', 'view');">View</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'view');">View</a></li>
 				</ul>
 			</div>
 			<div class="table-responsive">
@@ -106,20 +110,37 @@
 			</form>
 		</div>
 		<div id="searchResults" class="container" style="display:none;">
-			<button id="newSearch" onclick="$('#searchDiv')[0].style.display = 'block';$('#searchResults')[0].style.display = 'none'" class="btn btn-primary">New Search</button>
-
+			<button id="newSearch" onclick="$('#searchDiv')[0].style.display = 'block';$('#searchResults')[0].style.display = 'none'; $('#searchTable').bootstrapTable('removeAll');" class="btn btn-primary">New Search</button>
 			<h1>Search Results</h1>
+			<img id="photo_search" width="200" height="200" style="display:none;">
 			<div class="dropdown">
 				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
 					<span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="javascript:jQuery('#searchTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
-					<li><a href="javascript:jQuery('#searchTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
-					<li><a href="javascript:jQuery('#searchTable').bootstrapTable('showColumn', 'view');">View</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'view');">View</a></li>
 				</ul>
 			</div>
 			<div class="table-responsive">
 				<table align="center" id="searchTable" class="table table-bordered"></table>
+			</div>
+		</div>
+	</script>
+	<script type="text/ng-template" id="connections.html">
+		<div class="container">
+			<form id="connectForm">
+				<div class="form-group">
+					<label for="establishConnection">Connect To:</label>
+					<input type="text" class="form-control" id="establishConnection" placeholder="Enter IDENTITY of user" required>
+				</div>
+				<button type="submit" class="btn btn-primary">Connect</button>
+			</form>
+			<br>
+		</div>
+		<div class="container">
+			<div class="table-responsive">
+				<table align="center" id="connectionsTable" class="table table-bordered"></table>
 			</div>
 		</div>
 	</script>
@@ -134,15 +155,31 @@
 
       angular.module('stampCollection.controllers', [])
 		.controller('view', [function() {
-          initializeTable("#viewTable")
-		  node.query({}).then((result) => parseAndAppendLocalData(result, "#viewTable"))
+		  setImmediate(() => {
+            initializeTable("#viewTable")
+            node.query({}).then((result) => parseAndAppendLocalData(result, "#viewTable"))
+          })
 		}])
         .controller('search', [function() {
-          initializeTable("#searchTable")
-          $('#searchForm').submit(searchStamp)
+          setImmediate(() => {
+            initializeTable("#searchTable")
+            $('#searchForm').submit(searchStamp)
+          })
         }])
         .controller('create', [function() {
-          $('#createForm').submit(createStamp)
+          setImmediate(() => {
+            $('#createForm').submit(createStamp)
+          })
+        }])
+        .controller('connections', [function() {
+          setImmediate(() => {
+            $('#connectForm').submit(function (e) {
+              e.preventDefault();
+              node.connect(jQuery('#establishConnection')[0].value)
+                .then(() => refereshConnectionsTable())
+            })
+            initializeConnections()
+          })
         }])
 	  angular.module('stampCollection', ['ngRoute','stampCollection.controllers'])
 			.config(function($routeProvider, $locationProvider){
@@ -165,6 +202,10 @@
 					    templateUrl: 'search.html',
 	                    controller: 'search'
                     })
+                  .when('/connections', {
+                    templateUrl: 'connections.html',
+                    controller: 'connections'
+                  })
 					.otherwise({
 						templateUrl: 'error.html'
 					});
@@ -179,7 +220,7 @@
         if (!node) {
           //console.log("creating new node")
           node = new MongoIdbDs2("stamps", "hash, name, country, year")
-		  node.start()
+		  node.start().then(() => { $('#identity')[0].innerHTML = node.getIdentity()})
         }
 
 	</script>

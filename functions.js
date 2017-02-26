@@ -30,8 +30,8 @@ function parseAndAppendLocalData (data, table) {
   data.forEach((user) => {
     if (user.id === 'local') {
       user.result.forEach((dataItem) => {
-        dataItem.download = '<a href="javascript:node.view(\''+dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name +'\'))">Found Locally</a>'
-        dataItem.view = '<a href="javascript:node.view(\''+dataItem.hash + '\').then((data) => display_view(data))">View</a>'
+        dataItem.download = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name +'\')); return false;">Found Locally</a>'
+        dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_view(data)); return false;">View</a>'
         $(table).bootstrapTable('append', dataItem);
       })
     }
@@ -63,6 +63,15 @@ function display_view (data) {
   var urlCreator = window.URL || window.webkitURL;
   var imageUrl = urlCreator.createObjectURL( blob );
   var img = $( "#photo" );
+  img[0].style.display = 'block'
+  img[0].src = imageUrl;
+}
+function display_search (data) {
+  var arrayBufferView = new Uint8Array( data );
+  var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+  var urlCreator = window.URL || window.webkitURL;
+  var imageUrl = urlCreator.createObjectURL( blob );
+  var img = $( "#photo_search" );
   img[0].style.display = 'block'
   img[0].src = imageUrl;
 }
@@ -112,12 +121,36 @@ function createStamp(e) {
     data.forEach((user) => {
         user.result.forEach((dataItem) => {
           if (user.id === 'local') {
-            dataItem.download = '<a href="javascript:node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\'))">Found Locally</a>'
-            dataItem.view = '<a href="javascript:node.view(\''+dataItem.hash + '\').then((data) => display_view(data))">View</a>'
+            dataItem.download = '<a href="javascript:void(0)" onclick="node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Locally</a>'
+            dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_view(data)); return false;">View</a>'
           } else {
-            // networking part
+            dataItem.download = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\'' + dataItem.hash + '\')).then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Remotely</a>'
+            dataItem.view = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
           }
           $(table).bootstrapTable('append', dataItem);
         })
     })
   }
+  function initializeConnections() {
+  $('#connectionsTable').bootstrapTable({
+    columns: [{
+      field: 'user',
+      title: 'User Identity'
+    },{
+      field: 'disconnect',
+      title: 'Disconnect'
+    }],
+    data: []
+  });
+  node.getConnectedPeers().forEach((userHash) => {
+    let record = {}
+    record.user = userHash
+    record.disconnect = '<a href="javascript:void(0);" onclick="node.disconnect(\''+userHash + '\').then(() => refereshConnectionsTable()); return false;">Disconnect</a>'
+    $('#connectionsTable').bootstrapTable('append', record);
+
+  })
+}
+function refereshConnectionsTable() {
+  $('#connectionsTable').bootstrapTable('removeAll')
+  initializeConnections()
+}
