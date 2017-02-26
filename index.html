@@ -39,11 +39,29 @@
 	<script type="text/ng-template" id="index.html">
 		<div align="center" class="container">
 		<h1 align> Stamp Collection </h1>
-	<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
+			<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
 		<button id="injectButton" onclick="injectData();$('#dataChanged')[0].innerHTML='Injected 10 more data items'" class="btn btn-primary">Inject Data</button>
 		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items and reset connections '" class="btn btn-primary">Reset Data and Connections</button>
 		<p id="dataChanged"></p>
-	</div>
+			<div align="left">
+				<br><br><br>
+				<p>This website was built using:
+				<ol>
+					<li> AngularJs for routing and templating so that it acts like a SPA.</li>
+					<li> JQuery for DOM and CSS manipulation.</li>
+					<li> Bootstrap for tables and visuals.</li>
+				</ol>
+				What can you do?
+				<ol>
+					<li> Upload your own stamp collection.</li>
+					<li> Get your identity from the top right of any page and share it with others, so they can connect to you and view your stamp collection.</li>
+					<li> Connect to other stamp collectors.</li>
+					<li> Search for stamps within your connected stamp collectors.</li>
+					<li> Inject random data into this demo from the home page. (Unfortunately, the injected photos are not actually stamps but are simply random placeholders.</li>
+					<li> Reset the data in this demo from the home page.</li></ol>
+				</p>
+			</div>
+		</div>
 	</script>
 
 	<script type="text/ng-template" id="create.html">
