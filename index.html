@@ -37,15 +37,15 @@
 	<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
 	<div align="center">
 		<button id="injectButton" onclick="injectData();$('#dataChanged')[0].innerHTML='Injected 10 more data items'" class="btn btn-primary">Inject Data</button>
-		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items'" class="btn btn-primary">Reset Data</button>
+		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items'" class="btn btn-primary">Reset Data and Connections</button>
 		<p id="dataChanged"></p>
 	</div>
 	</script>
 
 	<script type="text/ng-template" id="create.html">
-		<div id="createForm" class="container">
+		<div class="container">
 			<h1>Create</h1>
-			<form>
+			<form id="createForm">
 				<div class="form-group">
 					<label for="name_create">Name</label>
 					<input type="text" class="form-control" id="name_create" placeholder="Enter Stamp Name" required>
@@ -61,6 +61,7 @@
 						<span class="custom-file-control"></span>
 				</div>
 				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="reset" class="btn btn-primary">Reset</button>
 			</form>
 		</div>
 	</script>
@@ -87,23 +88,26 @@
 
 	<script type="text/ng-template" id="search.html">
 
-		<div id="searchForm" class="container">
+		<div id="searchDiv" class="container">
 			<h1>Search</h1>
-			<form>
+			<form id="searchForm">
 				<div class="form-group">
-					<label for="name">Name</label>
-					<input type="text" class="form-control" id="name"placeholder="Enter Stamp Name">
+					<label for="name_search">Name</label>
+					<input type="text" class="form-control" id="name_search" placeholder="Enter Stamp Name">
 					<br>
-					<label for="country">Country Of Origin</label>
-					<input type="text" class="form-control" id="country"placeholder="Enter Country of Origin">
+					<label for="country_search">Country Of Origin</label>
+					<input type="text" class="form-control" id="country_search" placeholder="Enter Country of Origin">
 					<br>
-					<label for="year">Year Of Origin</label>
-					<input type="number" min="100" max="2017" class="form-control" id="year"placeholder="Enter Year Of Origin">
+					<label for="year_search">Year Of Origin</label>
+					<input type="number" min="100" max="2017" class="form-control" id="year_search" placeholder="Enter Year Of Origin">
 				</div>
 				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="reset" class="btn btn-primary">Reset</button>
 			</form>
 		</div>
 		<div id="searchResults" class="container" style="display:none;">
+			<button id="newSearch" onclick="$('#searchDiv')[0].style.display = 'block';$('#searchResults')[0].style.display = 'none'" class="btn btn-primary">New Search</button>
+
 			<h1>Search Results</h1>
 			<div class="dropdown">
 				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
@@ -131,11 +135,14 @@
       angular.module('stampCollection.controllers', [])
 		.controller('view', [function() {
           initializeTable("#viewTable")
-		  node.query({}).then((result) => parseAndAppendData(result, "#viewTable"))
+		  node.query({}).then((result) => parseAndAppendLocalData(result, "#viewTable"))
 		}])
         .controller('search', [function() {
           initializeTable("#searchTable")
-          node.query({}).then((result) => console.log("result: "+result))
+          $('#searchForm').submit(searchStamp)
+        }])
+        .controller('create', [function() {
+          $('#createForm').submit(createStamp)
         }])
 	  angular.module('stampCollection', ['ngRoute','stampCollection.controllers'])
 			.config(function($routeProvider, $locationProvider){
@@ -147,8 +154,9 @@
                     	templateUrl: 'index.html'
                   	})
 					.when('/create', {
-						templateUrl: 'create.html'
-					})
+						templateUrl: 'create.html',
+                      controller: 'create'
+                    })
 				    .when('/view', {
 					    templateUrl: 'view.html',
 					  	controller: 'view'

@@ -26,7 +26,7 @@ function initializeTable (table) {
   //$('table').bootstrapTable('hideColumn', 'view');
 }
 
-function parseAndAppendData (data, table) {
+function parseAndAppendLocalData (data, table) {
   data.forEach((user) => {
     if (user.id === 'local') {
       user.result.forEach((dataItem) => {
@@ -80,3 +80,44 @@ function download_view (data, fileName) {
   a.click();
   window.URL.revokeObjectURL(url);
 }
+
+function createStamp(e) {
+  e.preventDefault()
+  let metadata = {}
+  metadata.name = $('#name_create')[0].value
+  metadata.year = $('#year_create')[0].value
+  metadata.country = $('#country_create')[0].value
+  let file = $('#file_create')[0].files[0]
+  let reader = new window.FileReader();
+  reader.readAsArrayBuffer(file);
+  reader.onload = function (e) {
+    node.publish(e.target.result, metadata)
+    $('#createForm')[0].reset()
+  }
+}
+  function searchStamp(e) {
+    e.preventDefault()
+    let metadata = {}
+    if ($('#name_search')[0].value) metadata.name = $('#name_search')[0].value
+    if ($('#year_search')[0].value) metadata.year = $('#year_search')[0].value
+    if ($('#country_search')[0].value) metadata.country = $('#country_search')[0].value
+    $('#searchDiv')[0].style.display = 'none'
+    $('#searchForm')[0].reset()
+    node.query(metadata).then((result) => {
+      parseAndAppendData(result, "#searchTable")
+      $('#searchResults')[0].style.display = 'block'
+    })
+  }
+  function parseAndAppendData (data, table) {
+    data.forEach((user) => {
+        user.result.forEach((dataItem) => {
+          if (user.id === 'local') {
+            dataItem.download = '<a href="javascript:node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\'))">Found Locally</a>'
+            dataItem.view = '<a href="javascript:node.view(\''+dataItem.hash + '\').then((data) => display_view(data))">View</a>'
+          } else {
+            // networking part
+          }
+          $(table).bootstrapTable('append', dataItem);
+        })
+    })
+  }
