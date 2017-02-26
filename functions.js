@@ -21,9 +21,9 @@ function initializeTable (table) {
     }],
     data: []
   });
-  //$('table').bootstrapTable('hideColumn', 'country');
-  //$('table').bootstrapTable('hideColumn', 'year');
-  //$('table').bootstrapTable('hideColumn', 'view');
+  $('table').bootstrapTable('hideColumn', 'country');
+  $('table').bootstrapTable('hideColumn', 'year');
+  $('table').bootstrapTable('hideColumn', 'view');
 }
 
 function parseAndAppendLocalData (data, table) {
