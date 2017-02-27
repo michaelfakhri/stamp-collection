@@ -2,6 +2,7 @@ function initializeForm () {}
 function hideForm () {}
 
 function initializeTable (table) {
+  $(table).bootstrapTable('removeAll')
   $(table).bootstrapTable({
     columns: [{
       field: 'name',
@@ -34,7 +35,7 @@ function parseAndAppendLocalData (data, table) {
         dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_view(data)); return false;">View</a>'
         $(table).bootstrapTable('append', dataItem);
       })
-    }
+    }f
   })
 }
 
