@@ -122,7 +122,7 @@ function createStamp(e) {
         user.result.forEach((dataItem) => {
           if (user.id === 'local') {
             dataItem.download = '<a href="javascript:void(0)" onclick="node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Locally</a>'
-            dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_view(data)); return false;">View</a>'
+            dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_search(data)); return false;">View</a>'
           } else {
             dataItem.download = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\'' + dataItem.hash + '\')).then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Remotely</a>'
             dataItem.view = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
