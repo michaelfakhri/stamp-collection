@@ -41,7 +41,7 @@
 		<h1 align> Stamp Collection </h1>
 			<p align="center"> This demo is a peer to peer stamp collection based on the DS2 network model using native browser APIs. </p>
 		<button id="injectButton" onclick="injectData();$('#dataChanged')[0].innerHTML='Injected 10 more data items'" class="btn btn-primary">Inject Data</button>
-		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year');node.start();$('#dataChanged')[0].innerHTML='Deleted all data items and reset connections '" class="btn btn-primary">Reset Data and Connections</button>
+		<button id="resetButton" onclick="window.indexedDB.deleteDatabase('stamps');node = new MongoIdbDs2('stamps', 'hash, name, country, year', {signalling: '/libp2p-webrtc-star/dns/blooming-atoll-60728.herokuapp.com/wss/ipfs/'});node.start();$('#dataChanged')[0].innerHTML='Deleted all data items and reset connections '" class="btn btn-primary">Reset Data and Connections</button>
 		<p id="dataChanged"></p>
 			<div align="left">
 				<br><br><br>
@@ -237,7 +237,7 @@
         var node
         if (!node) {
           //console.log("creating new node")
-          node = new MongoIdbDs2("stamps", "hash, name, country, year")
+          node = new MongoIdbDs2("stamps", "hash, name, country, year", {signalling: '/libp2p-webrtc-star/dns/blooming-atoll-60728.herokuapp.com/wss/ipfs/'})
 		  node.start().then(() => { $('#identity')[0].innerHTML = node.getIdentity()})
         }
 

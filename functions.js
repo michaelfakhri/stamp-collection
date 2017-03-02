@@ -119,13 +119,17 @@ function createStamp(e) {
     })
   }
   function parseAndAppendData (data, table) {
+console.log(data[0].result[0])
     data.forEach((user) => {
-        user.result.forEach((dataItem) => {
+        user.result.forEach((newData) => {
+          let dataItem = newData
+          console.log(dataItem)
           if (user.id === 'local') {
             dataItem.download = '<a href="javascript:void(0)" onclick="node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Locally</a>'
             dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_search(data)); return false;">View</a>'
           } else {
-            dataItem.download = '<a href="javascript:void(0)" onclick="node.copy(\'' + dataItem.hash +'\',\''+user.id +'\').then(() => node.view(\'' + dataItem.hash + '\')).then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Remotely</a>'
+
+            dataItem.download = '<a href="javascript:void(0)" onclick="download_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\');return false;">Found Remotely</a>'
             dataItem.view = '<a href="javascript:void(0)" onclick="node.copy(\'' + dataItem.hash +'\',\''+user.id +'\').then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
           }
           $(table).bootstrapTable('append', dataItem);
@@ -154,4 +158,18 @@ function createStamp(e) {
 function refereshConnectionsTable() {
   $('#connectionsTable').bootstrapTable('removeAll')
   initializeConnections()
+}
+
+function download_remote (hash, user, name) {
+  setImmediate(() => {
+    node.copy(hash, user)
+      .then(() => console.log('here'))
+      .then(() => node.view(hash))
+      .then((data) => download_view(data, name))
+      .catch((err) => {
+        throw err
+      })
+  })
+  return false
+
 }
