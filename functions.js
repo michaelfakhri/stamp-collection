@@ -109,7 +109,7 @@ function createStamp(e) {
     e.preventDefault()
     let metadata = {}
     if ($('#name_search')[0].value) metadata.name = $('#name_search')[0].value
-    if ($('#year_search')[0].value) metadata.year = $('#year_search')[0].value
+    if ($('#year_search')[0].value) metadata.year = parseInt($('#year_search')[0].value)
     if ($('#country_search')[0].value) metadata.country = $('#country_search')[0].value
     $('#searchDiv')[0].style.display = 'none'
     $('#searchForm')[0].reset()
@@ -127,8 +127,8 @@ function createStamp(e) {
             dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_search(data)); return false;">View</a>'
           } else {
 
-            dataItem.download = '<a href="javascript:void(0)" onclick="download_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\');return false;">Found Remotely</a>'
-            dataItem.view = '<a href="javascript:void(0)" onclick="node.copy(\'' + dataItem.hash +'\',\''+user.id +'\').then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
+            dataItem.download = '<a href="javascript:void(0)" onclick="download_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\');return false;">'+user.id+'</a>'
+            dataItem.view = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
           }
           $(table).bootstrapTable('append', dataItem);
         })
@@ -160,7 +160,8 @@ function refereshConnectionsTable() {
 
 function download_remote (hash, user, name) {
   setImmediate(() => {
-    node.copy(hash, user)
+    node.connect(user)
+      .then(() => node.copy(hash, user))
       .then(() => node.view(hash))
       .then((data) => download_view(data, name))
       .catch((err) => {
