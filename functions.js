@@ -5,38 +5,46 @@ function initializeTable (table) {
   $(table).bootstrapTable('removeAll')
   $(table).bootstrapTable({
     columns: [{
-      field: 'name',
-      title: 'Stamp'
+      field: 'id',
+      visible: true
     },{
-      field: 'download',
-      title: 'Download'
+      field: 'name',
+      title: 'Stamp',
+      align: 'center'
     }, {
+      field: 'hops',
+      title: '# of Hops <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'hops\');">Remove</button>',
+      align: 'center'
+    },  {
       field: 'country',
-      title: 'Country Of Origin <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'country\');">Remove</button>'
+      title: 'Country Of Origin <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'country\');">Remove</button>',
+      align: 'center'
     }, {
       field: 'year',
-      title: 'Year Of Origin <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'year\');">Remove</button>'
+      title: 'Year Of Origin <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'year\');">Remove</button>',
+      align: 'center'
     }, {
+      field: 'download',
+      title: 'Download <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'download\');">Remove</button>',
+      align: 'center'
+    },  {
       field: 'view',
-      title: 'View <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'view\');">Remove</button>'
+      title: 'View <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'view\');">Remove</button>',
+      align: 'center'
+    }, {
+      field: 'delete',
+      title: 'Delete <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'delete\');">Remove</button>',
+      align: 'center'
     }],
-    data: []
+    uniqueId: 'id'
   });
+  $('table').bootstrapTable('hideColumn', 'id');
+  $('table').bootstrapTable('hideColumn', 'download');
+  $('table').bootstrapTable('hideColumn', 'delete');
+  $('table').bootstrapTable('hideColumn', 'hops');
   $('table').bootstrapTable('hideColumn', 'country');
   $('table').bootstrapTable('hideColumn', 'year');
   $('table').bootstrapTable('hideColumn', 'view');
-}
-
-function parseAndAppendLocalData (data, table) {
-  data.forEach((user) => {
-    if (user.id === 'local') {
-      user.result.forEach((dataItem) => {
-        dataItem.download = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name +'\')); return false;">Found Locally</a>'
-        dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_view(data)); return false;">View</a>'
-        $(table).bootstrapTable('append', dataItem);
-      })
-    }f
-  })
 }
 
 function injectData () {
@@ -72,7 +80,7 @@ function display_search (data) {
   var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
   var urlCreator = window.URL || window.webkitURL;
   var imageUrl = urlCreator.createObjectURL( blob );
-  var img = $( "#photo_search" );
+  var img = $( "#photo" );
   img[0].style.display = 'block'
   img[0].src = imageUrl;
 }
@@ -119,18 +127,24 @@ function createStamp(e) {
     })
   }
   function parseAndAppendData (data, table) {
+  let index = 0
     data.forEach((user) => {
         user.result.forEach((newData) => {
           let dataItem = newData
+          dataItem.hops = user.hops
+          dataItem.id = index
           if (user.id === 'local') {
-            dataItem.download = '<a href="javascript:void(0)" onclick="node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Locally</a>'
-            dataItem.view = '<a href="javascript:void(0)" onclick="node.view(\''+dataItem.hash + '\').then((data) => display_search(data)); return false;">View</a>'
+            dataItem.download = '<a href="javascript:void(0)" onclick= "node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Locally</a>'
+            dataItem.view = '<a href="javascript:void(0)" onclick= "node.view(\''+dataItem.hash + '\').then((data) => display_search(data)); return false;">View</a>'
+            dataItem.delete = '<a href="javascript:void(0)" onclick= "node.delete(\''+dataItem.hash + '\').then(() =>$(\''+table+'\').bootstrapTable(\'removeByUniqueId\','+index+'))" >Delete</a>'
           } else {
 
             dataItem.download = '<a href="javascript:void(0)" onclick="download_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\');return false;">'+user.id+'</a>'
             dataItem.view = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
+            dataItem.delete = '-'
           }
           $(table).bootstrapTable('append', dataItem);
+          index++
         })
     })
   }

@@ -97,11 +97,15 @@
 				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
 					<span class="caret"></span></button>
 				<ul class="dropdown-menu">
+					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'hops');"># of hops</a></li>
 					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
 					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'download');">Download</a></li>
 					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'view');">View</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'delete');">Delete</a></li>
 				</ul>
 			</div>
+			<br>
 			<div class="table-responsive">
 				<table align="center" id="viewTable" class="table table-bordered"></table>
 			</div>
@@ -130,16 +134,21 @@
 		<div id="searchResults" class="container" style="display:none;">
 			<button id="newSearch" onclick="$('#searchDiv')[0].style.display = 'block';$('#searchResults')[0].style.display = 'none'; $('#searchTable').bootstrapTable('removeAll');" class="btn btn-primary">New Search</button>
 			<h1>Search Results</h1>
-			<img id="photo_search" width="200" height="200" style="display:none;">
+			<img id="photo" width="200" height="200" style="display:none;">
+			<br>
 			<div class="dropdown">
 				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
 					<span class="caret"></span></button>
 				<ul class="dropdown-menu">
+					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'hops');"># of hops</a></li>
 					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
 					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'download');">Download</a></li>
 					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'view');">View</a></li>
+					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'delete');">Delete</a></li>
 				</ul>
 			</div>
+			<br>
 			<div class="table-responsive">
 				<table align="center" id="searchTable" class="table table-bordered"></table>
 			</div>
@@ -175,7 +184,7 @@
 		.controller('view', [function() {
 		  setImmediate(() => {
             initializeTable("#viewTable")
-            node.query({}).then((result) => parseAndAppendLocalData(result, "#viewTable"))
+            node.query({}, 0).then((result) => parseAndAppendData(result, "#viewTable"))
           })
 		}])
         .controller('search', [function() {
