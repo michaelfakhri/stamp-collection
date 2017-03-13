@@ -90,13 +90,34 @@
 
 	<script type="text/ng-template" id="view.html">
 
-		<div class="container">
-			<img id="photo" width="200" height="200" style="display:none;">
+		<div id="localItems" class="container">
 			<h1>Local items</h1>
 			<br>
 			<div class="table-responsive">
-				<table align="center" id="viewTable" class="table table-bordered"></table>
+				<table align="center" id="table" class="table table-bordered"></table>
 			</div>
+		</div>
+		<div id="viewDiv" class="container" style="display:none;">
+			<br>
+			<button id="backToResults" onclick="$('#localItems')[0].style.display = 'block';$('#viewDiv')[0].style.display = 'none'" class="btn btn-primary">Back to local items</button>
+			<br>
+			<br>
+			<img id="photo" width="200" height="200" style="display:none;">
+			<br>
+			<table class="table table-bordered">
+				<tr>
+					<th>Name</th>
+					<td id="name"></td>
+				</tr>
+				<tr>
+					<th>Country</th>
+					<td id="country"></td>
+				</tr>
+				<tr>
+					<th>Year</th>
+					<td id="year"></td>
+				</tr>
+			</table>
 		</div>
 	</script>
 
@@ -120,14 +141,38 @@
 			</form>
 		</div>
 		<div id="searchResults" class="container" style="display:none;">
-			<button id="newSearch" onclick="$('#searchDiv')[0].style.display = 'block';$('#searchResults')[0].style.display = 'none'; $('#searchTable').bootstrapTable('removeAll');" class="btn btn-primary">New Search</button>
+			<button id="newSearch" onclick="$('#searchDiv')[0].style.display = 'block';$('#searchResults')[0].style.display = 'none'; $('#table').bootstrapTable('removeAll');" class="btn btn-primary">New Search</button>
 			<h1>Search Results</h1>
-			<img id="photo" width="200" height="200" style="display:none;">
 			<br>
 			<div class="table-responsive">
-				<table align="center" id="searchTable" class="table table-bordered"></table>
+				<table align="center" id="table" class="table table-bordered"></table>
 			</div>
 		</div>
+		<div id="viewDiv" class="container" style="display:none;">
+			<button id="backToResults" onclick="$('#searchResults')[0].style.display = 'block';$('#searchDiv')[0].style.display = 'none';$('#viewDiv')[0].style.display = 'none'" class="btn btn-primary">Back to results</button>
+			<br>
+			<br>
+			<button id="newSearch2" onclick="$('#searchDiv')[0].style.display = 'block';$('#viewDiv')[0].style.display = 'none';$('#searchResults')[0].style.display = 'none'; $('#table').bootstrapTable('removeAll');" class="btn btn-primary">New Search</button>
+			<br>
+			<br>
+			<img id="photo" width="200" height="200" style="display:none;">
+			<br>
+			<table class="table table-bordered">
+				<tr>
+					<th>Name</th>
+					<td id="name"></td>
+				</tr>
+				<tr>
+					<th>Country</th>
+					<td id="country"></td>
+				</tr>
+				<tr>
+					<th>Year</th>
+					<td id="year"></td>
+				</tr>
+			</table>
+		</div>
+
 	</script>
 	<script type="text/ng-template" id="connections.html">
 		<div class="container">
@@ -164,17 +209,17 @@
           $('.navbar li').removeClass('active');
           $('#local').addClass('active');
 		  setImmediate(() => {
-            initializeTable("#viewTable")
-            $("#viewTable").bootstrapTable('hideColumn', 'hops');
+            initializeTable("#table")
+            $("#table").bootstrapTable('hideColumn', 'hops');
             node.query({}, 0)
-			  .then((result) => parseAndAppendData(result, "#viewTable"))
+			  .then((result) => parseAndAppendData(result, "#table"))
           })
 		}])
         .controller('search', [function() {
           $('.navbar li').removeClass('active');
           $('#search').addClass('active');
           setImmediate(() => {
-            initializeTable("#searchTable")
+            initializeTable("#table")
             $('#searchForm').submit(searchStamp)
           })
         }])

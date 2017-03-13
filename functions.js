@@ -1,6 +1,3 @@
-function initializeForm () {}
-function hideForm () {}
-
 function initializeTable (table) {
   $(table).bootstrapTable('removeAll')
   $(table).bootstrapTable({
@@ -46,7 +43,7 @@ function initializeTable (table) {
 function injectData () {
     for (var i = 0; i < 10; i++ ) {
       let request = new XMLHttpRequest()
-      let url = 'https://unsplash.it/' + Math.floor((Math.random() * 1000) + 1) // resolution between 1 and 1000
+      let url = 'https://unsplash.it/200/200/?random'
       request.open("GET", url, true);
       request.responseType = "arraybuffer";
 
@@ -59,29 +56,27 @@ function injectData () {
       };
       request.send(null)
     }
-    //$('#injectButton')[0].style.display = 'none'
 }
 
-function display_view (data) {
-  var arrayBufferView = new Uint8Array( data );
+function display (imageData, name, year, country) {
+  if($( "#serchDiv" )[0]) $( "#serchDiv" )[0].style.display = 'none'
+  if($( "#localItems" )[0]) $( "#localItems" )[0].style.display = 'none'
+  if($( "#searchResults" )[0]) $( "#searchResults" )[0].style.display = 'none'
+  if($( "#viewDiv" )[0]) $( "#viewDiv" )[0].style.display = 'block'
+  var arrayBufferView = new Uint8Array( imageData );
   var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
   var urlCreator = window.URL || window.webkitURL;
   var imageUrl = urlCreator.createObjectURL( blob );
   var img = $( "#photo" );
   img[0].style.display = 'block'
   img[0].src = imageUrl;
-}
-function display_search (data) {
-  var arrayBufferView = new Uint8Array( data );
-  var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-  var urlCreator = window.URL || window.webkitURL;
-  var imageUrl = urlCreator.createObjectURL( blob );
-  var img = $( "#photo" );
-  img[0].style.display = 'block'
-  img[0].src = imageUrl;
+  $( "#name" )[0].innerHTML = name
+  $( "#year" )[0].innerHTML = year
+  $( "#country" )[0].innerHTML = country
+
 }
 
-function download_view (data, fileName) {
+function downloadImage (data, fileName) {
   var a = document.createElement("a");
   document.body.appendChild(a);
   a.style = "display: none";
@@ -118,7 +113,7 @@ function createStamp(e) {
     $('#searchDiv')[0].style.display = 'none'
     $('#searchForm')[0].reset()
     node.query(metadata).then((result) => {
-      parseAndAppendData(result, "#searchTable")
+      parseAndAppendData(result, "#table")
       $('#searchResults')[0].style.display = 'block'
     })
   }
@@ -130,14 +125,14 @@ function createStamp(e) {
           dataItem.hops = user.hops
           dataItem.id = index
           if (user.id === 'local') {
-            dataItem.download = '<a href="javascript:void(0)" onclick= "node.view(\'' + dataItem.hash + '\').then((data) => download_view(data,\'' + dataItem.name + '\')); return false;">Found Locally</a>'
-            dataItem.view = '<a href="javascript:void(0)" onclick= "node.view(\''+dataItem.hash + '\').then((data) => display_search(data)); return false;">View</a>'
             dataItem.delete = '<a href="javascript:void(0)" onclick= "node.delete(\''+dataItem.hash + '\').then(() =>$(\''+table+'\').bootstrapTable(\'removeByUniqueId\','+index+'))" >Delete</a>'
-          } else {
+            dataItem.download = '<a href="javascript:void(0)" onclick= "node.view(\'' + dataItem.hash + '\').then((data) => downloadImage(data,\'' + dataItem.name + '\'));">Found Locally</a>'
+            dataItem.name = '<a href="javascript:void(0)" onclick= "node.view(\''+dataItem.hash + '\').then((data) => display(data,\''+dataItem.name+'\',\''+dataItem.year+'\',\''+dataItem.country+'\')); return false;">'+dataItem.name+'</a>'
 
-            dataItem.download = '<a href="javascript:void(0)" onclick="download_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\');return false;">'+user.id+'</a>'
-            dataItem.view = '<a href="javascript:void(0)" onclick="node.connect(\''+user.id+'\').then(() => node.copy(\'' + dataItem.hash +'\',\''+user.id +'\')).then(() => node.view(\''+dataItem.hash + '\')).then((data) => display_search(data)); return false;">View</a>'
+          } else {
             dataItem.delete = '-'
+            dataItem.download = '<a href="javascript:void(0)" onclick="download_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\');return false;">'+user.id+'</a>'
+            dataItem.name = '<a href="javascript:void(0)" onclick=" view_remote(\''+dataItem.hash+'\', \''+user.id+'\', \''+dataItem.name+'\',\''+dataItem.year+'\',\''+dataItem.country+'\');return false;">'+dataItem.name+'</a>'
           }
           $(table).bootstrapTable('append', dataItem);
           index++
@@ -173,11 +168,23 @@ function download_remote (hash, user, name) {
     node.connect(user)
       .then(() => node.copy(hash, user))
       .then(() => node.view(hash))
-      .then((data) => download_view(data, name))
+      .then((data) => downloadImage(data, name))
       .catch((err) => {
         throw err
       })
   })
   return false
+}
 
+function view_remote (hash, user, name, year, country) {
+  setImmediate(() => {
+    node.connect(user)
+      .then(() => node.copy(hash, user))
+      .then(() => node.view(hash))
+      .then((data) => display(data, name, year, country))
+      .catch((err) => {
+        throw err
+      })
+  })
+  return false
 }
