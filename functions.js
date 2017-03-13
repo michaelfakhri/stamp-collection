@@ -6,45 +6,41 @@ function initializeTable (table) {
   $(table).bootstrapTable({
     columns: [{
       field: 'id',
-      visible: true
+      visible: false
     },{
       field: 'name',
       title: 'Stamp',
       align: 'center'
     }, {
       field: 'hops',
-      title: '# of Hops <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'hops\');">Remove</button>',
+      title: '# of Hops',
       align: 'center'
     },  {
       field: 'country',
-      title: 'Country Of Origin <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'country\');">Remove</button>',
-      align: 'center'
+      title: 'Country Of Origin',
+      align: 'center',
+      visible: false
     }, {
       field: 'year',
-      title: 'Year Of Origin <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'year\');">Remove</button>',
-      align: 'center'
+      title: 'Year Of Origin',
+      align: 'center',
+      visible: false
     }, {
       field: 'download',
-      title: 'Download <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'download\');">Remove</button>',
+      title: 'Download',
       align: 'center'
     },  {
       field: 'view',
-      title: 'View <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'view\');">Remove</button>',
-      align: 'center'
+      title: 'View',
+      align: 'center',
+      visible: false
     }, {
       field: 'delete',
-      title: 'Delete <br><button onclick="jQuery(\'table\').bootstrapTable(\'hideColumn\', \'delete\');">Remove</button>',
+      title: 'Delete',
       align: 'center'
     }],
     uniqueId: 'id'
   });
-  $('table').bootstrapTable('hideColumn', 'id');
-  $('table').bootstrapTable('hideColumn', 'download');
-  $('table').bootstrapTable('hideColumn', 'delete');
-  $('table').bootstrapTable('hideColumn', 'hops');
-  $('table').bootstrapTable('hideColumn', 'country');
-  $('table').bootstrapTable('hideColumn', 'year');
-  $('table').bootstrapTable('hideColumn', 'view');
 }
 
 function injectData () {

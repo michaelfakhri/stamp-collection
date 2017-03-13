@@ -21,11 +21,11 @@
 	<body>
 		<div id="navbar" class="navbar navbar-default">
      			<ul class="nav navbar-nav">
-					<li><a href="#home">Home</a></li>
-					<li><a href="#view">View Local Stamps</a></li>
-					<li><a href="#search">Search</a></li>
-					<li><a href="#create">Create</a></li>
-					<li><a href="#connections">Connections</a></li>
+					<li id="home"><a href="#home">Home</a></li>
+					<li id="local"><a href="#view">View Local Stamps</a></li>
+					<li id="search"><a href="#search">Search</a></li>
+					<li id="create"><a href="#create">Create</a></li>
+					<li id="connect"><a href="#connections">Connections</a></li>
 				</ul>
 		</div>
 		<div class="container" align="right">
@@ -93,18 +93,6 @@
 		<div class="container">
 			<img id="photo" width="200" height="200" style="display:none;">
 			<h1>Local items</h1>
-			<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
-					<span class="caret"></span></button>
-				<ul class="dropdown-menu">
-					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'hops');"># of hops</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'download');">Download</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'view');">View</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#viewTable').bootstrapTable('showColumn', 'delete');">Delete</a></li>
-				</ul>
-			</div>
 			<br>
 			<div class="table-responsive">
 				<table align="center" id="viewTable" class="table table-bordered"></table>
@@ -136,19 +124,6 @@
 			<h1>Search Results</h1>
 			<img id="photo" width="200" height="200" style="display:none;">
 			<br>
-			<div class="dropdown">
-				<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Add a column
-					<span class="caret"></span></button>
-				<ul class="dropdown-menu">
-					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'hops');"># of hops</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'country');">Country Of Origin</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'year');">Year Of Origin</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'download');">Download</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'view');">View</a></li>
-					<li><a href="javascript:void(0)" onclick="jQuery('#searchTable').bootstrapTable('showColumn', 'delete');">Delete</a></li>
-				</ul>
-			</div>
-			<br>
 			<div class="table-responsive">
 				<table align="center" id="searchTable" class="table table-bordered"></table>
 			</div>
@@ -173,7 +148,7 @@
 	</script>
 
 	<script type="text/ng-template" id="error.html">
-	<p align="center">OOP! An error occurred</p>
+	<p align="center">OOPS! An error occurred</p>
 	</script>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-rc.1/angular.min.js"></script>
@@ -181,73 +156,86 @@
     <script>
 
       angular.module('stampCollection.controllers', [])
+        .controller('home', [function() {
+          $('.navbar li').removeClass('active');
+          $('#home').addClass('active');
+        }])
 		.controller('view', [function() {
+          $('.navbar li').removeClass('active');
+          $('#local').addClass('active');
 		  setImmediate(() => {
             initializeTable("#viewTable")
-            node.query({}, 0).then((result) => parseAndAppendData(result, "#viewTable"))
+            $("#viewTable").bootstrapTable('hideColumn', 'hops');
+            node.query({}, 0)
+			  .then((result) => parseAndAppendData(result, "#viewTable"))
           })
 		}])
         .controller('search', [function() {
+          $('.navbar li').removeClass('active');
+          $('#search').addClass('active');
           setImmediate(() => {
             initializeTable("#searchTable")
             $('#searchForm').submit(searchStamp)
           })
         }])
         .controller('create', [function() {
+          $('.navbar li').removeClass('active');
+          $('#create').addClass('active');
           setImmediate(() => {
             $('#createForm').submit(createStamp)
           })
         }])
         .controller('connections', [function() {
+          $('.navbar li').removeClass('active');
+          $('#connect').addClass('active');
           setImmediate(() => {
             $('#connectForm').submit(function (e) {
               e.preventDefault();
               node.connect(jQuery('#establishConnection')[0].value)
                 .then(() => refereshConnectionsTable())
+				.catch((err) => alert('Could not connect to ' + jQuery('#establishConnection')[0].value))
             })
             initializeConnections()
           })
         }])
 	  angular.module('stampCollection', ['ngRoute','stampCollection.controllers'])
-			.config(function($routeProvider, $locationProvider){
-				$routeProvider
-					.when('/', {
-						templateUrl: 'index.html'
-					})
-                  	.when('/home', {
-                    	templateUrl: 'index.html'
-                  	})
-					.when('/create', {
-						templateUrl: 'create.html',
-                      controller: 'create'
-                    })
-				    .when('/view', {
-					    templateUrl: 'view.html',
-					  	controller: 'view'
-					})
-					.when('/search', {
-					    templateUrl: 'search.html',
-	                    controller: 'search'
-                    })
-                  .when('/connections', {
-                    templateUrl: 'connections.html',
-                    controller: 'connections'
-                  })
-					.otherwise({
-						templateUrl: 'error.html'
-					});
-					//$locationProvider.html5Mode(true);
-
+		.config(function($routeProvider, $locationProvider){
+		  $routeProvider
+			.when('/', {
+			  templateUrl: 'index.html',
+			  controller: 'home'
 			})
-			.run(function($rootScope, $location, $route) {
-			  //console.log("DEBUG: Current path is "+ $location.path())
+			.when('/home', {
+			  templateUrl: 'index.html',
+			  controller: 'home'
+			})
+			.when('/create', {
+			  templateUrl: 'create.html',
+			  controller: 'create'
+			})
+			.when('/view', {
+			  templateUrl: 'view.html',
+			  controller: 'view'
+			})
+			.when('/search', {
+			  templateUrl: 'search.html',
+			  controller: 'search'
+			})
+			.when('/connections', {
+			  templateUrl: 'connections.html',
+			  controller: 'connections'
+			})
+			.otherwise({
+			  templateUrl: 'error.html'
 			});
+		})
+		.run();
 
         var node
         if (!node) {
-          //console.log("creating new node")
           node = new MongoIdbDs2("stamps", "hash, name, country, year", {signalling: '/libp2p-webrtc-star/dns/blooming-atoll-60728.herokuapp.com/wss/ipfs/'})
-		  node.start().then(() => { $('#identity')[0].innerHTML = node.getIdentity()})
+		  node.start()
+			.then(() => { $('#identity')[0].innerHTML = node.getIdentity()})
         }
 
 	</script>
