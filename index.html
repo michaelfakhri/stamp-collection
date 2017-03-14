@@ -45,20 +45,20 @@
 		<p id="dataChanged"></p>
 			<div align="left">
 				<br><br><br>
-				<p>This website was built using:
-				<ol>
-					<li> AngularJs for routing and templating so that it acts like a SPA.</li>
-					<li> JQuery for DOM and CSS manipulation.</li>
-					<li> Bootstrap for tables and visuals.</li>
-				</ol>
-				What can you do?
+				<p>What can you do?
 				<ol>
 					<li> Upload your own stamp collection.</li>
 					<li> Get your identity from the top right of any page and share it with others, so they can connect to you and view your stamp collection.</li>
 					<li> Connect to other stamp collectors.</li>
 					<li> Search for stamps within your connected stamp collectors.</li>
-					<li> Inject random data into this demo from the home page. (Unfortunately, the injected photos are not actually stamps but are simply random placeholders.</li>
+					<li> Inject random data into this demo from the home page. (Unfortunately, the injected photos are not actually stamps but are simply random placeholders).</li>
 					<li> Reset the data in this demo from the home page.</li></ol>
+				This website was built using:
+				<ol>
+					<li> AngularJS for routing and templating so that it acts like a SPA.</li>
+					<li> jQuery for DOM and CSS manipulation.</li>
+					<li> Bootstrap for tables and visuals.</li>
+				</ol>
 				</p>
 			</div>
 		</div>
@@ -125,17 +125,20 @@
 
 		<div id="searchDiv" class="container">
 			<h1>Search</h1>
+			<p>Search can only perform exact matches in this demo.</p>
 			<form id="searchForm">
 				<div class="form-group">
 					<label for="name_search">Name</label>
 					<input type="text" class="form-control" id="name_search" placeholder="Enter Stamp Name">
 					<br>
-					<label for="country_search">Country Of Origin</label>
+					<label for="country_search">Country Of Origin*</label>
 					<input type="text" class="form-control" id="country_search" placeholder="Enter Country of Origin">
 					<br>
-					<label for="year_search">Year Of Origin</label>
+					<label for="year_search">Year Of Origin**</label>
 					<input type="number" min="100" max="2017" class="form-control" id="year_search" placeholder="Enter Year Of Origin">
 				</div>
+				<p>* Injected data has the following countries: US, Canada and Mexico.</p>
+				<p>** Injected data has the years from 2000 to 2009.</p>
 				<button type="submit" class="btn btn-primary">Submit</button>
 				<button type="reset" class="btn btn-primary">Reset</button>
 			</form>

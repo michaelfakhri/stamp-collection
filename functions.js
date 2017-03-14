@@ -41,17 +41,20 @@ function initializeTable (table) {
 }
 
 function injectData () {
+    let countries = ['US', 'Canada', 'Mexico', 'Unknown']
     for (var i = 0; i < 10; i++ ) {
       let request = new XMLHttpRequest()
       let url = 'https://unsplash.it/200/200/?random'
       request.open("GET", url, true);
       request.responseType = "arraybuffer";
 
+      let image = i
+
       request.onload = function (oEvent) {
         var arrayBuffer = request.response;
         if (arrayBuffer) {
           var byteArray = new Uint8Array(arrayBuffer);
-          node.publish(byteArray, {name:("Image "+Math.floor((Math.random() * 200) + 1)), country: ("Country "+Math.floor((Math.random() * 200) + 1)), year:Math.floor((Math.random() * 2000) + 1)})
+          node.publish(byteArray, {name:("Image "+Math.floor((Math.random() * 200) + 1)), country: countries[Math.floor(Math.random() * 3)], year:(2000 + image)})
         }
       };
       request.send(null)
