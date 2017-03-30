@@ -4,7 +4,7 @@
 The proof of concept app is available at [https://michaelfakhri.github.io/stamp-collection/](https://michaelfakhri.github.io/stamp-collection/). Currenlty works in Chrome, Firefox and Opera.
 
 ## Description
-A simple proof of concept for a peer to peer community that shares stamps using only the browser. Peers can connect to each other, upload, download or query stamps. This only serves as a proof of concept rather than a fully functional app. Peers need to exchange their identities with each other before they can connect to one another.
+A simple proof of concept (a really sloppy one) for a peer to peer community that shares stamps using only the browser. Peers can connect to each other, upload, download or query stamps. This only serves as a proof of concept rather than a fully functional app. Peers need to exchange their identities with each other before they can connect to one another.
 <br>
 <br>
 The app offers complete control over established connections and allows users to control the data they store on their local node.
